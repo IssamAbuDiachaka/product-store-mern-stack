@@ -1,0 +1,28 @@
+
+// config/database.js
+import dotenv from 'dotenv';
+dotenv.config();
+
+// Import mongoose to handle MongoDB connections
+import mongoose from 'mongoose';
+
+// Function to connect to MongoDB using Mongoose
+// This function will be called in the server file to establish the connection
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+
+    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
+    
+  } catch (error) {
+    console.error('❌ Database connection failed:', error.message);
+    process.exit(1);  // Exit if database fails
+  }
+};
+
+module.exports = connectDB;
+
+//uh40hS8a1d9gZm1P
