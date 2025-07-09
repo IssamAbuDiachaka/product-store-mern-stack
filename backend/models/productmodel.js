@@ -1,4 +1,5 @@
-import mongoose from 'mongoose';
+// Import mongoose
+import mongoose from "mongoose";
 
 // Define the product schema
 const productSchema = new mongoose.Schema({
@@ -11,8 +12,8 @@ const productSchema = new mongoose.Schema({
     price: {
         type: Number,
         required: true,
-        min: 0,
-        default: 0,
+        min: 0, // Ensure price is not negative
+        default: 0, // Default price if not provided
     },
     description: {
         type: String,
@@ -25,12 +26,13 @@ const productSchema = new mongoose.Schema({
     stock: {
         type: Number,
         required: true,
-        min: 0,
-        default: 0,
-    },
+        min: 0, // Ensure stock is not negative
+        default: 0, // Default stock if not provided
+    }
 }, {
-    timestamps: true,
+    timestamps: true, // Automatically manage createdAt and updatedAt fields
 });
 
-const Product = mongoose.model('Product', productSchema);
-export default Product;
+// Export the product model
+const ProductModel = mongoose.model("Product", productSchema);
+export default ProductModel;
