@@ -1,6 +1,5 @@
 import express from "express";
 
-const productRouter = express.Router();
 import {
     getAllProducts,
     getProductById, 
@@ -8,6 +7,7 @@ import {
     deleteProduct,
     updateProduct
 } from "../controllers/product.controller.js";
+const productRouter = express.Router();
 
 
 
