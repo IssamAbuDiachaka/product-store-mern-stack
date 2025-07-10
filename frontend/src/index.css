@@ -1,2 +1,9 @@
 @import "tailwindcss";
 
+h4 {
+    font-size: 16px;
+}
+
+p {
+    font-size: 15px;
+}

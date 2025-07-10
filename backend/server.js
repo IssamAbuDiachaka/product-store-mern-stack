@@ -8,7 +8,7 @@ import ProductModel from './models/productmodel.js';
 import connectDB from './config/db.js'; // Import the connectDB function to connect to MongoDB
 import productRouter from './routes/products.routes.js';
 await connectDB(); 
-
+import cors from 'cors';
 
 // Get the express app instance
 const app = express();
@@ -16,7 +16,7 @@ const app = express();
 
 
 app.use(express.json()); // Middleware to parse JSON bodies
-
+app.use(cors("*"))
 app.use('/api/products', productRouter);
 
 //  create a Get request for the root route, this will be the entry point of our backend server and will return a simple message

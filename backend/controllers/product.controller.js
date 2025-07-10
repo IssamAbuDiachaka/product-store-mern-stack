@@ -10,7 +10,10 @@ export const getAllProducts = async (req, res) => {
          // Fetch all products from the database
          const products = await ProductModel.find({});
 
-         res.status(200).json(products); // Return the products as a JSON response
+         res.status(200).json({
+          Success: true,
+          data: products
+         }); // Return the products as a JSON response
     } catch (error) {
         res.status(500).json({ message: 'Error fetching products', error: error.message });
     }
@@ -26,7 +29,10 @@ export const getProductById = async (req, res) => {
         // Fetch a single product by ID from the database
         const product = await ProductModel.findById(id);
 
-        res.status(200).json(product); // Return the product as a JSON response
+        res.status(200).json({
+          Success: true,
+          data: products
+         }); // Return the product as a JSON response
     } catch (error) {
         res.status(500).json({ message: 'Error fetching product', error: error.message });
     }
