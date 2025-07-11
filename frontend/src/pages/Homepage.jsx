@@ -1,18 +1,13 @@
-import { Rocket, SofaIcon } from 'lucide-react'
-import React, {useEffect} from 'react'
-import ProductCard from '../components/ProductCard'
-import ConfirmModal from '../components/ConfirmModal'
-import { useState } from 'react'; 
+import { Rocket } from 'lucide-react';
+import React, {useEffect, useState} from 'react';
+import ProductCard from '../components/ProductCard';
+import ConfirmModal from '../components/ConfirmModal';
 
 function Homepage() {
 
-const [products, setProducts] = React.useState([]);
-const [showModal, setModal] = useState(false);
-
-
-console.log(products);
-
-const [productID, setProductID] = useState(null);
+const [products, setProducts] = useState([]);
+const [showModal, setShowModal] = useState(false);
+const [productId, setProductId] = useState(null);
 
 //function to fetch all products from the server to homepage
 async function getAllProducts() {
@@ -22,7 +17,7 @@ const response = await fetch("http://localhost:5000/api/products", {
   headers: {
     "Content-Type": "application/json"
   },
-})
+});
 
 
 // check if the response is ok, if it is, then convert the response to json and log it to the console
@@ -32,7 +27,7 @@ if (response.ok) {
 }
 else{
   console.error("Failed to fetch products");
-}
+  }
 }
 
 useEffect(() => {
@@ -42,33 +37,29 @@ useEffect(() => {
 
 
   return (
-  
-    <div className='min-h-screen m-0'>
+    <div className='min-h-screen m-0 overflow-auto'>
       <div className=' w-[90%] mx-auto'>
-        <h2 className='text-center flex justify-center items-center font-semibold tracking-wide font-lato' >Current Products
-          <Rocket className='size={18}' />
+        <h2 className='text-center flex justify-center items-center font-semibold tracking-wide font-lato mt-4 -mb-3' >Current Products
+          <Rocket className='' />
         </h2>
 
-        {/** Grid for products */}
-        <div className='border-green-500 grid grid-cols-3 gap-3 py-3'>
+        {/** Grid container for products */}
+        <div className='grid grid-cols-3 gap-3 py-3'>
           {/** Map through the products and render a ProductCard for each product */}
             
-            {products.length > 0 && products.map
-            ((products) => (
+            {products.length > 0 && 
+            products.map((products) => (
                 <ProductCard
                  key={products._id}
-                  product={products}
-
+                 product={products}
+                 setShowModal={setShowModal}
+                 setProductId={setProductId}  
                 />
               ))}
          </div>
       </div>
-
-      {
-        showModal && (
-         < confirmModal
-          setShowModal={setShowModal}
-          productID={productID} 
+      {showModal && (
+         < ConfirmModal setShowModal={setShowModal} productId={productId} 
           /> 
         ) 
       }

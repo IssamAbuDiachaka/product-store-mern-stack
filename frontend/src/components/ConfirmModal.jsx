@@ -1,50 +1,49 @@
-import React from "react";  
+import { Button } from "@radix-ui/themes";
+import React from "react";
 
-function confirmModal({setShowModal, productID}) {
-        async function deleteProduct(id) {
-        try {
-            const response = await fetch (`http://localhost:5000/api/products/${id}`,{
-                method: "DELETE", 
-                headers: {
-                    "Content-Type": "application/json"   
-                }
-            })
-            const data = response.json();
-            if (response.ok) {
-                console.log("Product deleted successfully");
-            } 
-            
-            return data.products;
+function ConfirmModal({ setShowModal, productId }) {
+  async function deleteProduct(id) {
+    try {
+      const response = await fetch(`http://localhost:5000/api/products/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = response.json();
 
-        } catch (error) {
-            console.error("Error deleting product:", error);
-        }   
+      if (response.ok) {
+        console.log("Product Deleted Successfully!");
+      }
+      return data.product;
+    } catch (error) {
+      console.log(error);
     }
+  }
 
-    return (
-        <div className="absolute top-0 left-0 z-50 w-full h-screen bg-black bg-opacity-60 flex items-center justify-center p-4 ">
-            <div className="flex items-center justify-center h-full">
-                <h2>Are you sure you want to delete this product?</h2>
-               <div>
-                     <button 
-                     onClick={() => setShowModal(false)} 
-                     variant='primary' className="bg-blue-500 text-white px-4 py-2 rounded ml-4">
-                        Cancel
-                    </button>
-                    <button 
-                    onClick={() => {
-                        deleteProduct(productID)
-                        setShowModal(false);
-                         }
-                    } 
+  return (
+    <div className="absolute w-full h-screen bg-black/60 top-0 left-0 z-50 flex justify-center items-center">
+      <div className="max-w-2xl mx-auto bg-gray-900 border border-gray-500/25 p-4">
+        <h2>Confirm Product Deletion</h2>
 
-                    variant='primary' className="bg-red-500 text-white px-4 py-2 rounded ml-4">
-                        Delete
-                    </button>
-               </div>
-             </div>    
+        <div className="flex gap-2">
+          <Button onClick={() => setShowModal(false)} variant="outline">
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              deleteProduct(productId);
+              setShowModal(false);
+            }}
+            variant="solid"
+            color="red"
+          >
+            Delete
+          </Button>
         </div>
-    )
+      </div>
+    </div>
+  );
 }
 
-export default confirmModal;
+export default ConfirmModal;
