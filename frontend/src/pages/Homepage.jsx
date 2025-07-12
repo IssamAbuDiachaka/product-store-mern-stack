@@ -38,6 +38,7 @@ useEffect(() => {
 
   return (
     <div className='min-h-screen m-0 overflow-auto'>
+
       <div className=' w-[90%] mx-auto'>
         <h2 className='text-center flex justify-center items-center font-semibold tracking-wide font-lato mt-4 -mb-3' >Current Products
           <Rocket className='' />
@@ -58,6 +59,7 @@ useEffect(() => {
               ))}
          </div>
       </div>
+      
       {showModal && (
          < ConfirmModal setShowModal={setShowModal} productId={productId} 
           /> 

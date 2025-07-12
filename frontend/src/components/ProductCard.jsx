@@ -23,7 +23,7 @@ function handleDeleteProduct(id) {
                 <div className="p-1">
                     <h4>{product?.name}</h4>
                     <p>${product?.price}</p>
-                    <p>{product?.description}</p>
+                    <p className="line-clamp-3">{product?.description}</p>
                 
                     <div className="flex space-x-2 mt-2">
                         <PenBoxIcon

@@ -48,7 +48,7 @@ export const createProduct = async (req, res) => {
         await connectDB(); 
 
         // validate product data
-        if (!name || !price || !description || !imageUrl || stock === undefined) {
+        if (!name || !price || !description || !imageUrl || !stock) {
             return res.status(400).json({ message: 'All fields are required' });
         }
 
