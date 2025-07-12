@@ -5,6 +5,7 @@ import { Route } from 'react-router-dom';
 import CreatePage from './pages/CreatePage.jsx';
 import Homepage from './pages/Homepage.jsx';
 import Navbar from './components/navbar.jsx';
+import { Toaster } from 'sonner';
 
 
 function App() {
@@ -13,7 +14,7 @@ function App() {
   return (
     <>
      {/* first => We need navbar component, static accross all pages */}
-
+    <Toaster />
     <Navbar />
 
     <Routes>

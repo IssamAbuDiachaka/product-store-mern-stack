@@ -1,6 +1,7 @@
 import { LucideShoppingCart, PlusIcon, ShoppingBasket, SunIcon } from 'lucide-react';
 import React from 'react'
 import { Link } from 'react-router-dom';
+import ThemeSwitcher from '../components/ThemeSwitcher';
 
 
 function Navbar() {
@@ -23,7 +24,7 @@ function Navbar() {
       </Link>
 
       <button className='bg-gray-800 hover:bg-gray-600 text-white px-4 py-2 rounded cursor-pointer '>
-        <SunIcon className='' />
+        <ThemeSwitcher />
       </button>
 
     </div>

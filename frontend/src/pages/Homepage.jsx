@@ -5,9 +5,9 @@ import ConfirmModal from '../components/ConfirmModal';
 
 function Homepage() {
 
-const [products, setProducts] = useState([]);
-const [showModal, setShowModal] = useState(false);
-const [productId, setProductId] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [productId, setProductId] = useState(null);
 
 //function to fetch all products from the server to homepage
 async function getAllProducts() {
@@ -61,7 +61,11 @@ useEffect(() => {
       </div>
       
       {showModal && (
-         < ConfirmModal setShowModal={setShowModal} productId={productId} 
+         < ConfirmModal 
+            setShowModal={setShowModal} 
+            productId={productId}
+            refreshProducts 
+           // onDelete = {(id) => }
           /> 
         ) 
       }
