@@ -4,7 +4,7 @@ import { Routes } from 'react-router-dom';
 import { Route } from 'react-router-dom';
 import CreatePage from './pages/CreatePage.jsx';
 import Homepage from './pages/Homepage.jsx';
-import Navbar from './components/navbar.jsx';
+import Navbar from './components/navbar/Navbar.jsx';
 import { Toaster } from 'sonner';
 
 

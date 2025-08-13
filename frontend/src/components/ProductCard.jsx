@@ -49,7 +49,7 @@ function handleDeleteProduct(id) {
                 <img 
                 src={product?.imageUrl} 
                 alt={product?.name}
-                className="overflow-hidden w-full h-50 rounded h-18"
+                className="overflow-hidden w-full h-50 rounded"
                 />
                 <div className="p-1">
                     <h4>{product?.name}</h4>
@@ -132,7 +132,7 @@ function handleDeleteProduct(id) {
 
                           
                         <Trash2Icon  
-                            className="p-1 p-1 bg-red-400 text-black rounded cursor-pointer"
+                            className="p-1 bg-red-400 text-black rounded cursor-pointer"
 
                             onClick={() => handleDeleteProduct(product?._id)}   
                     />

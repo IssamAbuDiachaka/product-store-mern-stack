@@ -1,28 +1,28 @@
-import { MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
-import React from "react";
+import { Sun, Moon } from "lucide-react";
+import { useEffect, useState } from "react";
 
-function ThemeSwitcher () {
-    const {theme, setTheme} = useTheme();
-    return (
-        <div>
-            <div>    
-                {theme === "light" ? (
-                    <MoonIcon
-                    size={24}
-                    className="p-1" 
-                    onClick={() => setTheme("dark")}
-                    />
-                ):(
-                    <SunIcon
-                    onClick={() => setTheme("light")}
-                    size={24}
-                    className="p-1"
-                    />
-                ) }
-            </div>
-        </div>
-    );
+export default function ThemeSwitcher() {
+  const { theme, setTheme, systemTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // Prevents hydration mismatch
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) return null;
+
+  const currentTheme = theme === "system" ? systemTheme : theme;
+
+  return (
+    <button
+      onClick={() => setTheme(currentTheme === "light" ? "dark" : "light")}
+      className="p-2 rounded-full bg-gray-200 dark:bg-[#2d2d2d] hover:bg-gray-300 dark:hover:bg-[#3a3a3a] transition-colors"
+    >
+      {currentTheme === "light" ? (
+        <Moon className="text-gray-800" size={20} />
+      ) : (
+        <Sun className="text-yellow-400" size={20} />
+      )}
+    </button>
+  );
 }
-
-export default ThemeSwitcher;

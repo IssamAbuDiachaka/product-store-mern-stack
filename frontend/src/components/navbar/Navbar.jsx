@@ -7,9 +7,8 @@ import SupportMenu from "./SupportMenu";
 import CartIcon from "./CartIcon";
 import MobileMenu from "./MobileMenu";
 import ThemeSwitcher from "../ThemeSwitcher";
-import { Link } from "react-router-dom";
 
-export default function Navbar() {
+ function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -25,11 +24,6 @@ export default function Navbar() {
 
         {/* Menu */}
         <div className="hidden md:flex items-center space-x-6">
-          <Link to="/create-product">
-            <button className="bg-[#ff6f3c] hover:bg-[#e65c2b] text-white p-2 rounded-full">
-              <PlusIcon size={20} />
-            </button>
-          </Link>
           <AccountMenu />
           <SupportMenu />
           <CartIcon count={2} />
@@ -49,4 +43,5 @@ export default function Navbar() {
       {mobileOpen && <MobileMenu />}
     </nav>
   );
-}
+} 
+export default Navbar;

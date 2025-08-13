@@ -1,4 +1,4 @@
-import SearchBar from "./SearchBar";
+// import SearchBar from "./SearchBar";
 import AccountMenu from "./AccountMenu";
 import SupportMenu from "./SupportMenu";
 import CartIcon from "./CartIcon";
@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 export default function MobileMenu() {
   return (
     <div className="md:hidden bg-white dark:bg-[#1f1f1f] px-4 py-4 space-y-4">
-      <SearchBar />
+      {/* <SearchBar /> */}
       <Link
         to="/create-product"
         className="block text-gray-800 dark:text-gray-200 hover:text-[#ff6f3c]"
