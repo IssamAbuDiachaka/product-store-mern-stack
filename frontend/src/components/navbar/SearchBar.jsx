@@ -6,7 +6,7 @@ function SearchBar({ onSearch }) {
 
   const handleSearch = () => {
     if (query.trim()) {
-      onSearch(query);
+      onSearch?.(query);
     }
   };
 
@@ -21,15 +21,16 @@ function SearchBar({ onSearch }) {
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 w-full max-w-2xl">
       {/* Input container */}
       <div
-        className="flex items-center bg-gray-100 dark:bg-[#2d2d2d] 
-                   rounded-full px-3 py-1 shadow-sm focus-within:shadow-md 
-                   transition-shadow duration-200 w-full md:w-72"
+        className="flex items-center border border-gray-300 dark:border-gray-600 
+                   dark:bg-[#2d2d2d] rounded-lg px-4 py-2 
+                   shadow-sm focus-within:shadow-md 
+                   transition-shadow duration-200 w-full"
       >
         <Search
-          className="text-gray-500 dark:text-gray-400"
+          className="text-gray-500 dark:text-gray-400 "
           size={20}
           aria-hidden="true"
         />
@@ -40,12 +41,12 @@ function SearchBar({ onSearch }) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyPress}
-          className="flex-1 bg-transparent outline-none px-2 text-gray-800 dark:text-gray-200"
+          className="flex-1 outline-none px-3 text-gray-800 dark:text-gray-200 bg-transparent"
         />
         {query && (
           <button
             onClick={clearSearch}
-            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 cursor-pointer"
             aria-label="Clear search"
           >
             <X size={18} />
@@ -53,10 +54,11 @@ function SearchBar({ onSearch }) {
         )}
       </div>
 
-      {/* Search button outside */}
+      {/* Search button */}
       <button
         onClick={handleSearch}
-        className="bg-[#ff6f3c] hover:bg-[#e65c2b] text-white px-4 py-1.5 rounded-full transition-colors duration-200"
+        className="bg-[#fc7645] hover:bg-[#e65c2b] text-white px-3 py-2 rounded-lg 
+                   transition-colors duration-200 whitespace-nowrap cursor-pointer"
       >
         Search
       </button>

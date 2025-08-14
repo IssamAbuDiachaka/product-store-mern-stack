@@ -13,7 +13,7 @@ export default function AccountMenu({ isMobile }) {
     >
       <button
         onClick={isMobile ? () => setOpen(!open) : undefined}
-        className="flex items-center justify-between w-full text-gray-800 dark:text-gray-200 hover:text-[#ff6f3c]"
+        className="flex items-center justify-between w-full text-gray-800 dark:text-gray-200 hover:text-[#ff6f3c] cursor-pointer"
       >
         <span className="flex items-center space-x-1">
           <User size={20} />

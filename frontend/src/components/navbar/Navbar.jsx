@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Menu, X, PlusIcon } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import Logo from "./Logo";
 import SearchBar from "./SearchBar";
 import AccountMenu from "./AccountMenu";
@@ -8,26 +8,27 @@ import CartIcon from "./CartIcon";
 import MobileMenu from "./MobileMenu";
 import ThemeSwitcher from "../ThemeSwitcher";
 
- function Navbar() {
+function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <nav className="bg-white dark:bg-[#1f1f1f] shadow-md">
-      <div className="flex items-center justify-between px-4 py-3 lg:px-6">
-       
+    <nav className="bg-white dark:bg-gray-900 shadow-md">
+      <div className="flex items-center justify-between px-4 py-4 lg:px-6 gap-4">
+        
+        {/* Logo */}
         <Logo />
 
-        {/* Search */}
-        <div className="hidden md:flex">
+        {/* Search (takes max available space) */}
+        <div className="hidden md:flex flex-1 max-w-xl">
           <SearchBar />
         </div>
 
-        {/* Menu */}
+        {/* Right Menu */}
         <div className="hidden md:flex items-center space-x-6">
+          <ThemeSwitcher />
           <AccountMenu />
           <SupportMenu />
           <CartIcon count={2} />
-          <ThemeSwitcher />
         </div>
 
         {/* Mobile Hamburger */}
@@ -43,5 +44,5 @@ import ThemeSwitcher from "../ThemeSwitcher";
       {mobileOpen && <MobileMenu />}
     </nav>
   );
-} 
+}
 export default Navbar;
