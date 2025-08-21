@@ -24,9 +24,9 @@ function SearchBar({ onSearch }) {
     <div className="flex items-center gap-2 w-full max-w-2xl">
       {/* Input container */}
       <div
-        className="flex items-center border border-gray-300 dark:border-gray-600 
-                   dark:bg-[#2d2d2d] rounded-lg px-4 py-2 
-                   shadow-sm focus-within:shadow-md 
+        className="flex items-center border border-gray-300
+                   rounded-lg px-4 py-2
+                   shadow-sm focus-within:shadow-md
                    transition-shadow duration-200 w-full"
       >
         <Search
@@ -57,7 +57,7 @@ function SearchBar({ onSearch }) {
       {/* Search button */}
       <button
         onClick={handleSearch}
-        className="bg-[#fc7645] hover:bg-[#e65c2b] text-white px-3 py-2 rounded-lg 
+        className="bg-[#fc7645] hover:bg-[#e65c2b] text-white px-3 py-2 rounded-lg
                    transition-colors duration-200 whitespace-nowrap cursor-pointer"
       >
         Search

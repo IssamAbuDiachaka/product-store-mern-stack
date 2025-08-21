@@ -12,9 +12,8 @@ function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <nav className="bg-white dark:bg-gray-900 shadow-md">
+    <nav className="bg-white shadow-md">
       <div className="flex items-center justify-between px-4 py-4 lg:px-6 gap-4">
-        
         {/* Logo */}
         <Logo />
 
