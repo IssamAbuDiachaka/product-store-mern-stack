@@ -1,38 +1,63 @@
-//import the dotenv package to load environment variables
-import dotenv from 'dotenv'; 
+// server.js (Updated)
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import connectDB from './config/database.js';
+
+// Import routes
+import productRoutes from './routes/productRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+
+// Load environment variables
 dotenv.config();
 
-//import express
-import express from 'express';
-import ProductModel from './models/productmodel.js'; 
-import connectDB from './config/db.js'; // Import the connectDB function to connect to MongoDB
-import productRouter from './routes/products.routes.js';
-await connectDB(); 
-import cors from 'cors';
-
-// Get the express app instance
 const app = express();
 
+// Connect to database
+connectDB();
 
+// Middleware
+app.use(cors());                    // Enable CORS for frontend
+app.use(express.json());            // Parse JSON bodies
+app.use(express.urlencoded({ extended: true }));  // Parse URL-encoded bodies
 
-app.use(express.json()); // Middleware to parse JSON bodies
-app.use(cors("*"))
-app.use('/api/products', productRouter);
+// Routes
+app.use('/api/products', productRoutes);
+app.use('/api/users', userRoutes);
 
-//  create a Get request for the root route, this will be the entry point of our backend server and will return a simple message
+// Health check endpoint
 app.get('/', (req, res) => {
-    res.send('Hello from the backend Server!');
+  res.json({ 
+    message: 'Ecommerce API is running!',
+    version: '1.0.0',
+    endpoints: {
+      products: '/api/products',
+      users: '/api/users'
+    }
+  });
 });
 
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+    success: false,
+    message: 'Something went wrong!',
+    error: process.env.NODE_ENV === 'development' ? err.message : {}
+  });
+});
 
+// Handle 404 routes
+app.use('*', (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: `Route ${req.originalUrl} not found`
+  });
+});
 
+const PORT = process.env.PORT || 5000;
 
-const PORT = process.env.PORT;
-
-// Start the server
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📍 API available at http://localhost:${PORT}`);
 });
-
-// end of file
-// File: backend/server.js    
