@@ -1,146 +1,255 @@
-import { PenBox, Trash2Icon } from "lucide-react";
-import {Dialog, Button, Flex, TextField, TextArea} from "@radix-ui/themes";
+/**
+ * Enhanced ProductCard component with improved UI/UX and functionality
+ * Features: Optimized rendering, better error handling, loading states, and animations
+ */
+
 import { useState } from "react";
+import { PenBox, Trash2, Eye, ShoppingCart } from "lucide-react";
+import { Dialog, Button, Flex, TextField, TextArea, Card } from "@radix-ui/themes";
+import { motion } from "framer-motion";
+import { formatPrice, truncateText, validateProduct } from "../utils/helpers.js";
 import { toast } from "sonner";
 
-function ProductCard({ key, product, setShowModal, setProductId, refreshProducts}) {
+const ProductCard = ({ product, onUpdate, onDelete, onView }) => {
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [updatedProduct, setUpdatedProduct] = useState(product);
+  const [errors, setErrors] = useState({});
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Handle product update
+  const handleUpdate = async () => {
+    const validation = validateProduct(updatedProduct);
     
-
-const [updatedProduct, setUpdatedProduct] = useState(product)
-
-async function updateProductById(id){
-
-    const response = await fetch(`http://localhost:5000/api/products${id}`, {
-        method:"PUT",
-        headers: {
-            'Content-Type':'application/json'
-        },
-        body: JSON.stringify({
-            name: updatedProduct.name,
-            price:parseFloat(updatedProduct.price),
-            stock: Number(updatedProduct.stock),
-            imageUrl: updatedProduct.imageUrl,
-            description: updatedProduct.description
-        })
-    });
-
-    if (response.ok){
-        const data = await response.json()
-        console.log(data)
-        console.log("Product Updated Succesfuly")
-        refreshProducts();
-        toast("Product Updated Succesfuly")
+    if (!validation.isValid) {
+      setErrors(validation.errors);
+      return;
     }
-}
 
-function handleDeleteProduct(id) {
-    setShowModal(true);
-    setProductId(id);
-}
+    setErrors({});
+    setIsUpdating(true);
 
+    try {
+      await onUpdate(product._id, {
+        name: updatedProduct.name,
+        price: parseFloat(updatedProduct.price),
+        stock: parseInt(updatedProduct.stock),
+        imageUrl: updatedProduct.imageUrl,
+        description: updatedProduct.description,
+      });
+      setIsDialogOpen(false);
+    } catch (error) {
+      console.error('Failed to update product:', error);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
-    return(
-        <div 
-        key={key} 
-        className="border border-red-500/25 bg-gray-900 text-white p-2 m-2 rounded-lg shadow-lg hover:shadow-xl relative">
+  // Handle form input changes
+  const handleInputChange = (field, value) => {
+    setUpdatedProduct(prev => ({ ...prev, [field]: value }));
+    // Clear field error when user starts typing
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: null }));
+    }
+  };
 
-            <div>
+  // Handle delete confirmation
+  const handleDelete = () => {
+    if (window.confirm('Are you sure you want to delete this product?')) {
+      onDelete(product._id);
+    }
+  };
 
-                <img 
-                src={product?.imageUrl} 
-                alt={product?.name}
-                className="overflow-hidden w-full h-50 rounded"
-                />
-                <div className="p-1">
-                    <h4>{product?.name}</h4>
-                    <p>${product?.price}</p>
-                    <p className="line-clamp-3">{product?.description}</p>
-                
-                    <div className="flex space-x-2 mt-2">
-                       <Dialog.Root>
-                        <Dialog.Trigger>
-                            <PenBox
-                            size={18}
-                            className="p-1 bg-blue-400 text-black rounded"
-                            />
-                        </Dialog.Trigger>
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3 }}
+      className="group"
+    >
+      <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 h-full">
+        {/* Product Image */}
+        <div className="relative overflow-hidden aspect-square">
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            loading="lazy"
+          />
+          
+          {/* Stock Badge */}
+          <div className="absolute top-2 right-2">
+            <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+              product.stock > 0 
+                ? 'bg-green-100 text-green-800' 
+                : 'bg-red-100 text-red-800'
+            }`}>
+              {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
+            </span>
+          </div>
 
-                        <Dialog.Content maxWidth="400px">
-                            <Dialog.Title>Edit Product</Dialog.Title>
-                            <Flex direction="column" gap="3">
-                            <TextField.Root
-                                placeholder="Update product name"
-                                variant="outline"
-                                size={1}
-                                value={updatedProduct.name}
-                                type="text"
-                                onChange={(e) => setUpdatedProduct({... updatedProduct, name:e.target.value})}
-                            />
-
-                            <TextField.Root
-                                placeholder="Update product price"
-                                size={1}
-                                type="float"
-                                variant="outline"
-                                min={0}
-                                value={updatedProduct.price}
-                                onChange={(e) => setUpdatedProduct({... updatedProduct, price:e.target.value})}
-                            />
-
-                            <TextField.Root
-                                placeholder="Update product stock"
-                                size={1}
-                                type="number"
-                                variant="outline"
-                                min={0}
-                                value={updatedProduct.stock}
-                                onChange={(e) => setUpdatedProduct({... updatedProduct, stock:e.target.value})}
-                            />
-
-                            <TextField.Root
-                                placeholder="Update product image URL"
-                                size="1"
-                                type="url"
-                                variant="outline"
-                                value={updatedProduct.imageUrl}
-                                onChange={(e) => setUpdatedProduct({... updatedProduct, imageUrl:e.target.value})}
-                            />
-
-                            <TextArea
-                                size="3"
-                                placeholder="Update product description…"
-                                variant="outline"
-                                rows={5}
-                                value={updatedProduct.description}
-                                type="text"
-                                onChange={(e) => setUpdatedProduct({... updatedProduct, description:e.target.value})}
-                            />
-                            </Flex>
-
-                            <Flex gap="3" mt="4" justify="end">
-                            <Dialog.Close>
-                                <Button variant="soft" color="gray">
-                                Cancel
-                                </Button>
-                            </Dialog.Close>
-                            <Dialog.Close>
-                                <Button onClick={() => (updateProductById(product._Id))}>Updat Product</Button>
-                            </Dialog.Close>
-                            </Flex>
-                        </Dialog.Content>
-                       </Dialog.Root> 
-
-                          
-                        <Trash2Icon  
-                            className="p-1 bg-red-400 text-black rounded cursor-pointer"
-
-                            onClick={() => handleDeleteProduct(product?._id)}   
-                    />
-                    </div>
-                </div>
+          {/* Overlay Actions */}
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+            <div className="flex gap-2">
+              <Button
+                size="2"
+                variant="solid"
+                className="bg-white/90 text-gray-900 hover:bg-white"
+                onClick={() => onView && onView(product)}
+              >
+                <Eye size={16} />
+              </Button>
+              <Button
+                size="2"
+                variant="solid"
+                color="blue"
+                disabled={product.stock === 0}
+              >
+                <ShoppingCart size={16} />
+              </Button>
             </div>
-     </div>
-    );
-}
+          </div>
+        </div>
+
+        {/* Product Details */}
+        <div className="p-4 space-y-3">
+          <div>
+            <h3 className="font-semibold text-lg line-clamp-1" title={product.name}>
+              {product.name}
+            </h3>
+            <p className="text-2xl font-bold text-primary">
+              {formatPrice(product.price)}
+            </p>
+          </div>
+
+          <p className="text-sm text-gray-600 line-clamp-3">
+            {truncateText(product.description, 100)}
+          </p>
+
+          {/* Action Buttons */}
+          <div className="flex justify-between items-center pt-2">
+            <div className="flex gap-2">
+              <Dialog.Root open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <Dialog.Trigger asChild>
+                  <Button size="2" variant="soft" color="blue">
+                    <PenBox size={16} />
+                    Edit
+                  </Button>
+                </Dialog.Trigger>
+
+                <Dialog.Content maxWidth="500px">
+                  <Dialog.Title>Edit Product</Dialog.Title>
+                  <Dialog.Description size="2" mb="4">
+                    Make changes to your product information.
+                  </Dialog.Description>
+
+                  <Flex direction="column" gap="4">
+                    {/* Product Name */}
+                    <div>
+                      <TextField.Root
+                        placeholder="Product name"
+                        value={updatedProduct.name}
+                        onChange={(e) => handleInputChange('name', e.target.value)}
+                        color={errors.name ? 'red' : undefined}
+                      />
+                      {errors.name && (
+                        <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+                      )}
+                    </div>
+
+                    {/* Price and Stock */}
+                    <Flex gap="3">
+                      <div className="flex-1">
+                        <TextField.Root
+                          placeholder="Price"
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={updatedProduct.price}
+                          onChange={(e) => handleInputChange('price', e.target.value)}
+                          color={errors.price ? 'red' : undefined}
+                        />
+                        {errors.price && (
+                          <p className="text-red-500 text-xs mt-1">{errors.price}</p>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <TextField.Root
+                          placeholder="Stock"
+                          type="number"
+                          min="0"
+                          value={updatedProduct.stock}
+                          onChange={(e) => handleInputChange('stock', e.target.value)}
+                          color={errors.stock ? 'red' : undefined}
+                        />
+                        {errors.stock && (
+                          <p className="text-red-500 text-xs mt-1">{errors.stock}</p>
+                        )}
+                      </div>
+                    </Flex>
+
+                    {/* Image URL */}
+                    <div>
+                      <TextField.Root
+                        placeholder="Image URL"
+                        type="url"
+                        value={updatedProduct.imageUrl}
+                        onChange={(e) => handleInputChange('imageUrl', e.target.value)}
+                        color={errors.imageUrl ? 'red' : undefined}
+                      />
+                      {errors.imageUrl && (
+                        <p className="text-red-500 text-xs mt-1">{errors.imageUrl}</p>
+                      )}
+                    </div>
+
+                    {/* Description */}
+                    <div>
+                      <TextArea
+                        placeholder="Product description..."
+                        rows={4}
+                        value={updatedProduct.description}
+                        onChange={(e) => handleInputChange('description', e.target.value)}
+                        color={errors.description ? 'red' : undefined}
+                      />
+                      {errors.description && (
+                        <p className="text-red-500 text-xs mt-1">{errors.description}</p>
+                      )}
+                    </div>
+                  </Flex>
+
+                  <Flex gap="3" mt="6" justify="end">
+                    <Dialog.Close>
+                      <Button variant="soft" color="gray">
+                        Cancel
+                      </Button>
+                    </Dialog.Close>
+                    <Button 
+                      onClick={handleUpdate} 
+                      loading={isUpdating}
+                      disabled={isUpdating}
+                    >
+                      {isUpdating ? 'Updating...' : 'Update Product'}
+                    </Button>
+                  </Flex>
+                </Dialog.Content>
+              </Dialog.Root>
+
+              <Button
+                size="2"
+                variant="soft"
+                color="red"
+                onClick={handleDelete}
+              >
+                <Trash2 size={16} />
+                Delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Card>
+    </motion.div>
+  );
+};
 
 export default ProductCard;

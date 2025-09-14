@@ -1,68 +1,104 @@
-import { useState } from "react";
-import { Search, X } from "lucide-react";
+/**
+ * Enhanced SearchBar component that integrates with global search functionality
+ * Features: Real-time search, debouncing, better UX, and keyboard navigation
+ */
 
-function SearchBar({ onSearch }) {
+import { useState, useEffect, useRef } from "react";
+import { Search, X, Loader2 } from "lucide-react";
+import { TextField } from "@radix-ui/themes";
+import { debounce } from "../../utils/helpers";
+
+function SearchBar({ onSearch, loading = false, placeholder = "Search products..." }) {
   const [query, setQuery] = useState("");
+  const [isFocused, setIsFocused] = useState(false);
+  const inputRef = useRef(null);
 
-  const handleSearch = () => {
-    if (query.trim()) {
-      onSearch?.(query);
-    }
+  // Debounced search function
+  const debouncedSearch = useRef(
+    debounce((searchQuery) => {
+      onSearch?.(searchQuery);
+    }, 300)
+  ).current;
+
+  // Handle input changes with debounced search
+  const handleInputChange = (value) => {
+    setQuery(value);
+    debouncedSearch(value);
   };
 
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      handleSearch();
-    }
-  };
+  // Handle keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Focus search on Ctrl/Cmd + K
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        inputRef.current?.focus();
+      }
+      
+      // Clear search on Escape
+      if (e.key === 'Escape' && isFocused) {
+        setQuery("");
+        onSearch?.("");
+        inputRef.current?.blur();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isFocused, onSearch]);
 
   const clearSearch = () => {
     setQuery("");
+    onSearch?.("");
+    inputRef.current?.focus();
   };
 
   return (
-    <div className="flex items-center gap-2 w-full max-w-2xl">
-      {/* Input container */}
-      <div
-        className="flex items-center border border-gray-300
-                   rounded-lg px-4 py-2
-                   shadow-sm focus-within:shadow-md
-                   transition-shadow duration-200 w-full"
+    <div className="relative w-full max-w-md">
+      <TextField.Root
+        ref={inputRef}
+        size="3"
+        placeholder={placeholder}
+        value={query}
+        onChange={(e) => handleInputChange(e.target.value)}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        className={`w-full transition-all duration-200 ${
+          isFocused ? 'ring-2 ring-blue-200' : ''
+        }`}
       >
-        <Search
-          className="text-gray-500 dark:text-gray-400 "
-          size={20}
-          aria-hidden="true"
-        />
-        <input
-          type="text"
-          placeholder="Search products..."
-          aria-label="Search products"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={handleKeyPress}
-          className="flex-1 outline-none px-3 text-gray-800 dark:text-gray-200 bg-transparent"
-        />
+        <TextField.Slot side="left">
+          {loading ? (
+            <Loader2 size={16} className="animate-spin text-gray-400" />
+          ) : (
+            <Search size={16} className="text-gray-400" />
+          )}
+        </TextField.Slot>
+        
         {query && (
-          <button
-            onClick={clearSearch}
-            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 cursor-pointer"
-            aria-label="Clear search"
-          >
-            <X size={18} />
-          </button>
+          <TextField.Slot side="right">
+            <button
+              onClick={clearSearch}
+              className="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded"
+              aria-label="Clear search"
+              type="button"
+            >
+              <X size={14} />
+            </button>
+          </TextField.Slot>
         )}
-      </div>
+      </TextField.Root>
 
-      {/* Search button */}
-      <button
-        onClick={handleSearch}
-        className="bg-[#fc7645] hover:bg-[#e65c2b] text-white px-3 py-2 rounded-lg
-                   transition-colors duration-200 whitespace-nowrap cursor-pointer"
-      >
-        Search
-      </button>
+      {/* Search shortcut hint */}
+      {!isFocused && !query && (
+        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+          <kbd className="hidden sm:inline-flex items-center px-2 py-1 text-xs font-mono bg-gray-100 border border-gray-200 rounded">
+            ⌘K
+          </kbd>
+        </div>
+      )}
     </div>
   );
 }
+
 export default SearchBar;

@@ -1,54 +1,118 @@
-import { Button } from "@radix-ui/themes";
-import React from "react";
+/**
+ * Enhanced ConfirmModal component with better UX and accessibility
+ * Features: Better animations, loading states, and cleaner design
+ */
 
-function ConfirmModal({ setShowModal, productId, refreshProducts }) {
-  async function deleteProduct(id) {
+import { useState } from 'react';
+import { AlertTriangle, X } from 'lucide-react';
+import { Dialog, Button, Flex, Text } from '@radix-ui/themes';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const ConfirmModal = ({ 
+  isOpen, 
+  onClose, 
+  onConfirm, 
+  title = "Confirm Action",
+  message = "Are you sure you want to proceed?",
+  confirmText = "Confirm",
+  cancelText = "Cancel",
+  variant = "danger" // danger, warning, info
+}) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleConfirm = async () => {
+    setIsLoading(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/products/${id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = response.json();
-
-      if (response.ok) {
-        console.log("Product Deleted Successfully!");
-        //getAllProducts();
-        setShowModal(false);
-        refreshProducts();
-       // onDelete(id);
-      }
-      return data.product;
+      await onConfirm();
+      onClose();
     } catch (error) {
-      console.log(error);
+      console.error('Confirmation action failed:', error);
+    } finally {
+      setIsLoading(false);
     }
-  }
+  };
+
+  const variantStyles = {
+    danger: {
+      icon: <AlertTriangle className="text-red-500" size={24} />,
+      confirmButton: { color: 'red' },
+      iconBg: 'bg-red-50'
+    },
+    warning: {
+      icon: <AlertTriangle className="text-yellow-500" size={24} />,
+      confirmButton: { color: 'yellow' },
+      iconBg: 'bg-yellow-50'
+    },
+    info: {
+      icon: <AlertTriangle className="text-blue-500" size={24} />,
+      confirmButton: { color: 'blue' },
+      iconBg: 'bg-blue-50'
+    }
+  };
+
+  const currentVariant = variantStyles[variant];
 
   return (
-    <div className="absolute w-full h-screen bg-black/60 top-0 left-0 z-50 flex justify-center items-center">
-      <div className="max-w-3xl mx-auto bg-gray-900 border border-gray-500/25 p-4 rounded">
-        <h2 className="text-white">Confirm Product Deletion</h2>
+    <Dialog.Root open={isOpen} onOpenChange={onClose}>
+      <AnimatePresence>
+        {isOpen && (
+          <Dialog.Content maxWidth="400px">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Flex direction="column" gap="4">
+                {/* Header */}
+                <Flex align="center" gap="3">
+                  <div className={`p-2 rounded-full ${currentVariant.iconBg}`}>
+                    {currentVariant.icon}
+                  </div>
+                  <div className="flex-1">
+                    <Dialog.Title size="4" weight="bold">
+                      {title}
+                    </Dialog.Title>
+                  </div>
+                  <Dialog.Close>
+                    <Button variant="ghost" size="1" color="gray">
+                      <X size={16} />
+                    </Button>
+                  </Dialog.Close>
+                </Flex>
 
-        <div className="flex justify-between mt-4">
-          <Button className="cursor-pointer"
-            onClick={() => setShowModal(false)} variant="solid" >
-            Cancel
-          </Button>
-          <Button className="cursor-pointer"
-            onClick={() => {
-              deleteProduct(productId);
-              setShowModal(false);
-            }}
-            variant="solid"
-            color="red" 
-          >
-            Delete
-          </Button>
-        </div>
-      </div>
-    </div>
+                {/* Message */}
+                <Text size="3" color="gray">
+                  {message}
+                </Text>
+
+                {/* Actions */}
+                <Flex gap="3" justify="end" mt="2">
+                  <Dialog.Close>
+                    <Button 
+                      variant="soft" 
+                      color="gray"
+                      disabled={isLoading}
+                    >
+                      {cancelText}
+                    </Button>
+                  </Dialog.Close>
+                  <Button
+                    onClick={handleConfirm}
+                    loading={isLoading}
+                    disabled={isLoading}
+                    {...currentVariant.confirmButton}
+                  >
+                    {isLoading ? 'Processing...' : confirmText}
+                  </Button>
+                </Flex>
+              </Flex>
+            </motion.div>
+          </Dialog.Content>
+        )}
+      </AnimatePresence>
+    </Dialog.Root>
   );
-}
+};
 
 export default ConfirmModal;
