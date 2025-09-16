@@ -2,10 +2,10 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import connectDB from './config/database.js';
+import connectDB from './config/db.js';
 
 // Import routes
-import productRoutes from './routes/productRoutes.js';
+import productRoutes from './routes/products.routes.js';
 import userRoutes from './routes/userRoutes.js';
 
 // Load environment variables

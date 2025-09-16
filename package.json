@@ -1,25 +1,41 @@
 {
   "name": "product-store-mern-stack",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon backend/server.js",
-    "start": "node backend/server.js"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "version": "2.0.0",
+  "description": "Full-stack MERN Product Store with clean architecture",
+  "main": "backend/src/server.js",
   "type": "module",
-  "dependencies": {
-    "cors": "^2.8.5",
-    "dotenv": "^17.0.1",
-    "express": "^5.1.0",
-    "mongodb": "^6.17.0",
-    "mongoose": "^8.16.2"
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:frontend": "npm run dev --prefix frontend", 
+    "build": "npm run build --prefix frontend",
+    "start": "npm start --prefix backend",
+    "install:all": "npm install && npm install --prefix backend && npm install --prefix frontend",
+    "clean": "rm -rf node_modules backend/node_modules frontend/node_modules && rm -rf backend/logs/*.log",
+    "test": "npm test --prefix backend",
+    "lint": "npm run lint --prefix backend && npm run lint --prefix frontend",
+    "format": "npm run format --prefix backend && npm run format --prefix frontend"
   },
+  "keywords": [
+    "mern",
+    "ecommerce", 
+    "react",
+    "nodejs",
+    "mongodb",
+    "express",
+    "clean-architecture"
+  ],
+  "author": "Issam",
+  "license": "MIT",
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "your-repository-url"
   }
 }
