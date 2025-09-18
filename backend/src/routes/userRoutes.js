@@ -1,9 +1,10 @@
 /**
- * User Routes - User management and profile operations
- * Includes cart and wishlist management
+ * User Routes - Complete user management routes
+ * Handles authentication, profile, cart, and admin operations
  */
 
 import { Router } from 'express';
+import AuthController from '../controllers/AuthController.js';
 import UserController from '../controllers/UserController.js';
 import { authenticate, authorize } from '../middlewares/auth.js';
 import { validationMiddleware } from '../middlewares/validation.js';
@@ -11,6 +12,7 @@ import { validateCartItem, validateWishlistItem, validateUserQuery, validateUpda
 import rateLimit from 'express-rate-limit';
 
 const router = Router();
+const authController = new AuthController();
 const userController = new UserController();
 
 // Rate limiting
@@ -21,13 +23,43 @@ const generalLimiter = rateLimit({
   legacyHeaders: false
 });
 
+// Public routes - Authentication
+router.post('/register', 
+  generalLimiter,
+  authController.register
+);
+
+router.post('/login', 
+  generalLimiter,
+  authController.login
+);
+
 // Protected user routes - require authentication
 router.use(authenticate);
 
-// User profile and account management
 router.get('/profile', 
   generalLimiter,
-  userController.getProfile
+  authController.getProfile
+);
+
+router.put('/profile',
+  generalLimiter,
+  authController.updateProfile
+);
+
+router.post('/logout', 
+  generalLimiter,
+  authController.logout
+);
+
+router.post('/logout-all',
+  generalLimiter, 
+  authController.logoutAllDevices
+);
+
+router.post('/change-password',
+  generalLimiter,
+  authController.changePassword
 );
 
 // Cart operations
@@ -38,7 +70,6 @@ router.get('/cart',
 
 router.post('/cart',
   generalLimiter,
-  validationMiddleware(validateCartItem, 'body'),
   userController.addToCart
 );
 
@@ -65,7 +96,6 @@ router.get('/wishlist',
 
 router.post('/wishlist',
   generalLimiter,
-  validationMiddleware(validateWishlistItem, 'body'),
   userController.addToWishlist
 );
 
@@ -83,7 +113,6 @@ router.get('/orders',
 // Admin-only routes
 router.get('/admin/all',
   authorize('admin'),
-  validationMiddleware(validateUserQuery, 'query'),
   userController.getAllUsers
 );
 
@@ -94,7 +123,6 @@ router.get('/admin/statistics',
 
 router.patch('/admin/:userId/role',
   authorize('admin'),
-  validationMiddleware(validateUpdateRole, 'body'),
   userController.updateUserRole
 );
 

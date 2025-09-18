@@ -1,11 +1,10 @@
-// Server Setup
-// Features: Security, monitoring, error handling.
 
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
+import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 
 // Import utilities and config
@@ -29,7 +28,7 @@ dotenv.config();
 class Server {
   constructor() {
     this.app = express();
-    this.port = process.env.PORT || 8000;
+    this.port = process.env.PORT || 5000;
     
     this.initializeDatabase();
     this.initializeMiddlewares();
@@ -93,6 +92,9 @@ class Server {
       maxAge: 86400 // 24 hours
     };
     this.app.use(cors(corsOptions));
+
+    // Cookie parser for JWT tokens
+    this.app.use(cookieParser());
 
     // Logging middleware
     if (process.env.NODE_ENV === 'development') {
@@ -171,7 +173,7 @@ class Server {
         status: dbHealth.status === 'healthy' ? 'healthy' : 'unhealthy',
         timestamp: new Date().toISOString(),
         uptime: `${Math.floor(uptime / 60)}m ${Math.floor(uptime % 60)}s`,
-        version: process.env.npm_package_version || '1.0.0',
+        version: process.env.npm_package_version || '2.0.0',
         environment: process.env.NODE_ENV || 'development',
         database: dbHealth,
         memory: {
@@ -233,7 +235,7 @@ class Server {
           login: 'POST /auth/login',
           logout: 'POST /auth/logout',
           refreshToken: 'POST /auth/refresh-token',
-          profile: 'GET /auth/profile'
+          profile: 'GET /auth/me'
         },
         products: {
           list: 'GET /products',

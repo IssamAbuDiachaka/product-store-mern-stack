@@ -1,8 +1,3 @@
-/**
- * Enhanced ProductCard component with improved UI/UX and functionality
- * Features: Optimized rendering, better error handling, loading states, and animations
- */
-
 import { useState } from "react";
 import { PenBox, Trash2, Eye, ShoppingCart } from "lucide-react";
 import { Dialog, Button, Flex, TextField, TextArea, Card } from "@radix-ui/themes";

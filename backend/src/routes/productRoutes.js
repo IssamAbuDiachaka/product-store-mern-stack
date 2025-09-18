@@ -6,8 +6,6 @@
 import { Router } from 'express';
 import ProductController from '../controllers/ProductController.js';
 import { authenticate, authorize, optionalAuth } from '../middlewares/auth.js';
-import { validateProduct, validateProductQuery, validateProductReview } from '../validators/productValidator.js';
-import { validationMiddleware } from '../middlewares/validation.js';
 import rateLimit from 'express-rate-limit';
 
 const router = Router();
@@ -32,7 +30,6 @@ const searchLimit = rateLimit({
 
 // Public routes - no authentication required
 router.get('/', 
-  validationMiddleware(validateProductQuery, 'query'),
   optionalAuth,
   productController.getAllProducts
 );
@@ -47,13 +44,11 @@ router.get('/categories',
 
 router.get('/search', 
   searchLimit,
-  validationMiddleware(validateProductQuery, 'query'),
   optionalAuth,
   productController.searchProducts
 );
 
 router.get('/category/:category',
-  validationMiddleware(validateProductQuery, 'query'),
   optionalAuth,
   productController.getProductsByCategory
 );
@@ -79,7 +74,6 @@ router.get('/:id',
 // Protected routes - authentication required
 router.post('/:id/reviews',
   authenticate,
-  validationMiddleware(validateProductReview, 'body'),
   productController.addReview
 );
 
@@ -88,14 +82,12 @@ router.post('/',
   authenticate,
   authorize('admin'),
   createProductLimit,
-  validationMiddleware(validateProduct, 'body'),
   productController.createProduct
 );
 
 router.put('/:id',
   authenticate,
   authorize('admin'),
-  validationMiddleware(validateProduct, 'body', true), // isUpdate = true
   productController.updateProduct
 );
 

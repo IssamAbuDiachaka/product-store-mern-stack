@@ -11,7 +11,6 @@ const orderSchema = new mongoose.Schema({
     type: String,
     unique: true,
     required: true,
-    index: true
   },
   
   // Customer information
@@ -19,7 +18,6 @@ const orderSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: 'User',
     required: [true, 'Customer is required'],
-    index: true
   },
   
   // Order items - store price at purchase time
@@ -104,7 +102,6 @@ const orderSchema = new mongoose.Schema({
       'refunded'
     ],
     default: 'pending',
-    index: true
   },
   
   // Payment information
@@ -118,7 +115,6 @@ const orderSchema = new mongoose.Schema({
       type: String,
       enum: ['pending', 'completed', 'failed', 'refunded'],
       default: 'pending',
-      index: true
     },
     transactionId: String,
     paymentDate: Date,

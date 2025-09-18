@@ -1,13 +1,13 @@
 /**
- * Authentication Routes
- * Handles user authentication and authorization endpoints
+ * Authentication Routes - Dedicated auth endpoints
+ * Handles user authentication and session management
  */
 
 import { Router } from 'express';
 import AuthController from '../controllers/AuthController.js';
 import { authenticate } from '../middlewares/auth.js';
 import { validationMiddleware } from '../middlewares/validation.js';
-import { validateUser, validateLogin, validateChangePassword, validateUpdateProfile } from '../validators/userValidator.js';
+import { validateUser, validateLogin, validateChangePassword } from '../validators/userValidator.js';
 import rateLimit from 'express-rate-limit';
 
 const router = Router();
@@ -52,34 +52,30 @@ router.post('/refresh-token',
 );
 
 // Protected routes
+router.use(authenticate);
+
 router.post('/logout',
   generalLimiter,
-  authenticate,
   authController.logout
 );
 
 router.post('/logout-all',
   generalLimiter,
-  authenticate,
   authController.logoutAllDevices
 );
 
-router.get('/profile',
+router.get('/me',
   generalLimiter,
-  authenticate,
   authController.getProfile
 );
 
 router.put('/profile',
   generalLimiter,
-  authenticate,
-  validationMiddleware(validateUpdateProfile, 'body'),
   authController.updateProfile
 );
 
 router.post('/change-password',
   authLimiter,
-  authenticate,
   validationMiddleware(validateChangePassword, 'body'),
   authController.changePassword
 );

@@ -3,6 +3,9 @@
 
 import mongoose from 'mongoose';
 import logger from '../utils/logger.js';
+import dotenv from 'dotenv';
+
+dotenv.config();  // Load environment variables from .env file
 
 class Database {
   constructor() {
@@ -26,9 +29,7 @@ class Database {
       family: 4, // Use IPv4, skip trying IPv6
       
       // Buffer options
-      bufferCommands: false, // Disable mongoose buffering
-      bufferMaxEntries: 0, // Disable mongoose buffering
-      
+      bufferCommands: false, // Disable mongoose buffering      
       // Additional options
       retryWrites: true,
       w: 'majority'
